@@ -49,13 +49,18 @@ class Mhauri_Slack_Model_Observers_NewOrder
     public function notify($observer)
     {
         $_order = $observer->getOrder();
+        $status = $_order->getStatus();
+        $payment_method_code = $_order->getPayment()->getMethodInstance()->getCode();
+
 
         if($this->_getConfig(Mhauri_Slack_Model_Notification::NEW_ORDER_PATH)) {
-            $message = $this->_helper->__("*A new order has been placed.* \n*Order ID:* %s, *Name:* %s, *Amount:* %s %s",
+            $message = $this->_helper->__("*A new order has been placed.* \n*Order ID:* %s, *Name:* %s, *Amount:* %s %s,\n*Status:* %s, *Payment Method:* %s",
                 $_order->getIncrementId(),
                 $this->getCustomerName($_order),
                 $_order->getQuoteBaseGrandTotal(),
-                $_order->getOrderCurrencyCode()
+                $_order->getOrderCurrencyCode(),
+            	$status,
+            	$payment_method_code
             );
 
             $this->_notificationModel
