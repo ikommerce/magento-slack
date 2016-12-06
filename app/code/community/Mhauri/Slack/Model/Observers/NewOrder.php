@@ -22,8 +22,7 @@
  * @author Marcel Hauri <marcel@hauri.me>, Sander Mangel <https://github.com/sandermangel>
  */
 
-class Mhauri_Slack_Model_Observers_NewOrder
- extends Mhauri_Slack_Model_Observers_Abstract
+class Mhauri_Slack_Model_Observers_NewOrder extends Mhauri_Slack_Model_Observers_Abstract
 {
 
     /**
@@ -51,10 +50,12 @@ class Mhauri_Slack_Model_Observers_NewOrder
         $_order = $observer->getOrder();
         $status = $_order->getStatus();
         $payment_method_code = $_order->getPayment()->getMethodInstance()->getCode();
-
+        $order_url = Mage::helper('adminhtml')->getUrl('adminhtml/sales_order/view/order_id/',
+        		['order_id'=> $_order->getId()]);
 
         if($this->_getConfig(Mhauri_Slack_Model_Notification::NEW_ORDER_PATH)) {
-            $message = $this->_helper->__("*A new order has been placed.* \n*Order ID:* %s, *Name:* %s, *Amount:* %s %s,\n*Status:* %s, *Payment Method:* %s",
+            $message = $this->_helper->__("*A new order has been placed.* \n*Order ID:* <%s|%s>, *Name:* %s, *Amount:* %s %s,\n*Status:* %s, *Payment Method:* %s",
+                $order_url,
                 $_order->getIncrementId(),
                 $this->getCustomerName($_order),
                 $_order->getQuoteBaseGrandTotal(),
