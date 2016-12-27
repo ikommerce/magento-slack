@@ -38,14 +38,14 @@
         </resources>
 
         <events>
-            <sales_order_place_after>
+            <sales_order_save_after>
                 <observers>
                     <notifyNewOrder>
                         <class>Mhauri_Slack_Model_Observers_NewOrder</class>
                         <method>notify</method>
                     </notifyNewOrder>
                 </observers>
-            </sales_order_place_after>
+            </sales_order_save_after>
             <admin_session_user_login_failed>
                 <observers>
                     <notifyAdminUserLoginFailed>

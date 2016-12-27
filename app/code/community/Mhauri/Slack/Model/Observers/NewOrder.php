@@ -49,24 +49,29 @@ class Mhauri_Slack_Model_Observers_NewOrder extends Mhauri_Slack_Model_Observers
     {
         $_order = $observer->getOrder();
         $status = $_order->getStatus();
+        $oldstatus=$_order->getOrigData('status');
+        $statusProcessing = 'processing';
         $payment_method_code = $_order->getPayment()->getMethodInstance()->getCode();
         $order_url = Mage::helper('adminhtml')->getUrl('adminhtml/sales_order/view/order_id/',
         		['order_id'=> $_order->getId()]);
 
-        if($this->_getConfig(Mhauri_Slack_Model_Notification::NEW_ORDER_PATH)) {
-            $message = $this->_helper->__("*A new order has been placed.* \n*Order ID:* <%s|%s>, *Name:* %s, *Amount:* %s %s,\n*Status:* %s, *Payment Method:* %s",
-                $order_url,
-                $_order->getIncrementId(),
-                $this->getCustomerName($_order),
-                $_order->getQuoteBaseGrandTotal(),
-                $_order->getOrderCurrencyCode(),
-            	$status,
-            	$payment_method_code
-            );
-
-            $this->_notificationModel
-                ->setMessage($message)
-                ->send();
+        /*Se lo status non era processing e lo divenda inviamo la mail*/
+        if ($status == $statusProcessing && $oldstatus != $statusProcessing){
+	        if($this->_getConfig(Mhauri_Slack_Model_Notification::NEW_ORDER_PATH)) {
+	            $message = $this->_helper->__("*A new order has been placed.* \n*Order ID:* <%s|%s>, *Name:* %s, *Amount:* %s %s,\n*Status:* %s, *Payment Method:* %s",
+	                $order_url,
+	                $_order->getIncrementId(),
+	                $this->getCustomerName($_order),
+	                $_order->getQuoteBaseGrandTotal(),
+	                $_order->getOrderCurrencyCode(),
+	            	$status,
+	            	$payment_method_code
+	            );
+	
+	            $this->_notificationModel
+	                ->setMessage($message)
+	                ->send();
+	        }
         }
     }
 }
