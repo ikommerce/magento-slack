@@ -32,12 +32,9 @@ class Mhauri_Slack_Model_Observers_NewOrder extends Mhauri_Slack_Model_Observers
      */
     public function getCustomerName($_order)
     {
-        if ($_order->getCustomer()->getFirstname()) {
-            $customerName = $_order->getCustomer()->getFirstname() . ' ' . $_order->getCustomer()->getLastname();
-        }
-        else {
-            $customerName = $_order->getBillingAddress()->getFirstname() . ' ' . $_order->getBillingAddress()->getLastname() . ' (Guest)';
-        }
+    	 $firstname = $_order->getCustomerFirstname();
+    	 $lastname  = $_order->getCustomerLastname(); 
+         $customerName = $firstname . ' ' . $lastname;
         return $customerName;
     }
 
@@ -47,13 +44,17 @@ class Mhauri_Slack_Model_Observers_NewOrder extends Mhauri_Slack_Model_Observers
      */
     public function notify($observer)
     {
-        $_order = $observer->getOrder();
+        $_order = $observer->getEvent()->getOrder();
+        Mage::log($_order->debug(),null,'ikom.log');
         $status = $_order->getStatus();
         $oldstatus=$_order->getOrigData('status');
+        
         $statusProcessing = 'processing';
+        
         $payment_method_code = $_order->getPayment()->getMethodInstance()->getCode();
+        
         $order_url = Mage::helper('adminhtml')->getUrl('adminhtml/sales_order/view/order_id/',
-        		['order_id'=> $_order->getId()]);
+        		['order_id'=> $_order->getEntityId()]);
 
         /*Se lo status non era processing e lo divenda inviamo la mail*/
         if ($status == $statusProcessing && $oldstatus != $statusProcessing){
@@ -62,7 +63,7 @@ class Mhauri_Slack_Model_Observers_NewOrder extends Mhauri_Slack_Model_Observers
 	                $order_url,
 	                $_order->getIncrementId(),
 	                $this->getCustomerName($_order),
-	                $_order->getQuoteBaseGrandTotal(),
+	                $_order->getGrandTotal(),
 	                $_order->getOrderCurrencyCode(),
 	            	$status,
 	            	$payment_method_code
