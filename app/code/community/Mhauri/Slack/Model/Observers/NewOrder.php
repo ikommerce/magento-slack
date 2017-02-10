@@ -45,7 +45,6 @@ class Mhauri_Slack_Model_Observers_NewOrder extends Mhauri_Slack_Model_Observers
     public function notify($observer)
     {
         $_order = $observer->getEvent()->getOrder();
-        Mage::log($_order->debug(),null,'ikom.log');
         $status = $_order->getStatus();
         $oldstatus=$_order->getOrigData('status');
         
