@@ -38,12 +38,20 @@
         </resources>
 
         <events>
+            <sales_order_save_commit_after>
+                <observers>
+                    <notifyOnHold>
+                        <class>Mhauri_Slack_Model_Observers_OnHold</class>
+                        <method>notify</method>
+                    </notifyOnHold>
+                </observers>
+            </sales_order_save_commit_after>
             <sales_order_save_after>
                 <observers>
-                    <notifyChangeStatus>
-                        <class>Mhauri_Slack_Model_Observers_ChangeStatus</class>
-                        <method>change_status_notify</method>
-                    </notifyChangeStatus>
+                    <notifyNewOrder>
+                        <class>Mhauri_Slack_Model_Observers_NewOrder</class>
+                        <method>notify</method>
+                    </notifyNewOrder>
                 </observers>
             </sales_order_save_after>
             <admin_session_user_login_failed>
