@@ -22,7 +22,7 @@
  * @author Marcel Hauri <marcel@hauri.me>, Sander Mangel <https://github.com/sandermangel>
  */
 
-class Mhauri_Slack_Model_Observers_NewOrder extends Mhauri_Slack_Model_Observers_Abstract
+class Mhauri_Slack_Model_Observers_ChangeStatus extends Mhauri_Slack_Model_Observers_Abstract
 {
 
     /**
@@ -42,13 +42,14 @@ class Mhauri_Slack_Model_Observers_NewOrder extends Mhauri_Slack_Model_Observers
      * Send a notification when a new order was placed
      * @param $observer
      */
-    public function notify($observer)
+    public function change_status_notify($observer)
     {
         $_order = $observer->getEvent()->getOrder();
         $status = $_order->getStatus();
         $oldstatus=$_order->getOrigData('status');
         
         $statusProcessing = 'processing';
+        $statusOnHold = 'holded';
         
         $payment_method_code = $_order->getPayment()->getMethodInstance()->getCode();
         
@@ -72,6 +73,22 @@ class Mhauri_Slack_Model_Observers_NewOrder extends Mhauri_Slack_Model_Observers
 	                ->setMessage($message)
 	                ->send();
 	        }
-        }
-    }
+        }elseif ($status == $statusOnHold && $oldstatus != $statusOnHold){
+	        if($this->_getConfig(Mhauri_Slack_Model_Notification::ON_HOLD_PATH)) {
+	            $message = $this->_helper->__("*A order has been holded.* \n*Order ID:* <%s|%s>, *Name:* %s, *Amount:* %s %s,\n*Status:* %s, *Payment Method:* %s",
+	                $order_url,
+	                $_order->getIncrementId(),
+	                $this->getCustomerName($_order),
+	                $_order->getGrandTotal(),
+	                $_order->getOrderCurrencyCode(),
+	            	$status,
+	            	$payment_method_code
+	            );
+	
+	            $this->_notificationModel
+	                ->setMessage($message)
+	                ->send();
+	        }
+    	}
+	}
 }

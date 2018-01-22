@@ -39,7 +39,8 @@ abstract class Mhauri_Slack_Model_Abstract extends Mage_Core_Model_Abstract
     const CHANNEL_PATH                  = 'slack/api/channel';
     const USERNAME_PATH                 = 'slack/api/username';
     const ICON_PATH                     = 'slack/api/icon';
-
+	
+    const ON_HOLD_PATH                	= 'slack/notification/on_hold';
     const NEW_ORDER_PATH                = 'slack/notification/new_order';
     const NEW_CUSTOMER_ACCOUNT_PATH     = 'slack/notification/new_customer_account';
     const ADMIN_USER_LOGIN_FAILED_PATH  = 'slack/notification/admin_user_login_failed';
