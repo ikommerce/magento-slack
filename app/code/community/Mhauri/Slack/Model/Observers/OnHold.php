@@ -56,7 +56,7 @@ class Mhauri_Slack_Model_Observers_OnHold extends Mhauri_Slack_Model_Observers_A
 
         if ($state == $stateOnHold && $oldstate != $stateOnHold){
 	        if($this->_getConfig(Mhauri_Slack_Model_Notification::ON_HOLD_PATH)) {
-	        	Mage::log("oldstate ".$oldstate." state ". $state,null,'ikom.log');
+	        	//Mage::log("oldstate ".$oldstate." state ". $state,null,'ikom.log');
 	            $message = $this->_helper->__("*A order status has changed: On Hold.* \n*Order ID:* <%s|%s>, *Name:* %s, *Amount:* %s %s,\n*Status:* %s, *Payment Method:* %s",
 	                $order_url,
 	                $_order->getIncrementId(),
